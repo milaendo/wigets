@@ -21,11 +21,6 @@ This command:
 
 
 ## Step 2: Start Backend
-Create a .env file with this content:
-
-MONGO_URI=mongodb://localhost:27017/widgetsdb
-PORT=4000
-
 
 ``` bash 
 cd backend
@@ -36,7 +31,7 @@ npm run dev
 ## Step 3: Start Frontend
 
 ``` bash 
-cd ../frontend
+cd frontend
 npm install
 npm run dev
 ```
