@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { TextWidget } from './TextWidget';
+import type { Widget } from '../App';
 
-export function WidgetManager({ widgets, createWidget }: any) {
+type WidgetManagerProps = {
+  widgets: Widget[];
+  createWidget: (widget: { type: string; content: string }) => Promise<void>;
+  deleteWidget: (id: string) => Promise<void>;
+};
+
+export function WidgetManager({ widgets, createWidget, deleteWidget }: WidgetManagerProps) {
   const [modalOpen, setModalOpen] = useState(false);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +35,7 @@ export function WidgetManager({ widgets, createWidget }: any) {
 
       <div className="space-y-4">
         {widgets.map((widget: any) => (
-          <TextWidget content={widget.content} key={widget._id} />
+          <TextWidget content={widget.content} key={widget._id} onDelete={() => deleteWidget(widget._id)} />
         ))}
       </div>
 

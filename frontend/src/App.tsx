@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { WidgetManager } from './components/WidgetManager';
 
-type Widget = {
-  content: string
-  _id: string
-}
+export type Widget = {
+  _id: string;
+  type: string;
+  content: string;
+};
 function App() {
   const [widgets, setWidgets] = useState<Widget[]>([]);
 
@@ -23,10 +24,17 @@ function App() {
     fetchWidgets();
   };
 
+  const deleteWidget = async (id: string) => {
+    await fetch(`/api/widgets/${id}`, {
+      method: 'DELETE',
+    });
+    fetchWidgets();
+  };
+
   useEffect(() => {
     fetchWidgets();
   }, []);
-  return <WidgetManager widgets={widgets} createWidget={createWidget} />;
+  return <WidgetManager widgets={widgets} createWidget={createWidget} deleteWidget={deleteWidget} />;
 
 }
 

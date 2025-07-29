@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { createWidget } from './Widgets/createWidget';
 import { getWidgets } from './Widgets/getWidgets';
+import { deleteWidgetById } from './Widgets/deleteWidgetById';
 
 const app = express();
 app.use(express.json());
@@ -34,5 +35,16 @@ app.get('/api/widgets', async (_req, res) => {
   } catch (err: any) {
     console.error(err);
     res.status(400).json({ error: err.message });
+  }
+});
+
+app.delete('/api/widgets/:id', async (req, res) => {
+  try {
+    const deleted = await deleteWidgetById(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Widget not found' });
+    res.json({ message: 'Widget deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: 'Failed to delete widget' });
   }
 });
