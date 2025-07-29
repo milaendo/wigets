@@ -1,47 +1,34 @@
 import { useEffect, useState } from 'react';
+import { WidgetManager } from './components/WidgetManager';
 
+type Widget = {
+  content: string
+  _id: string
+}
 function App() {
-  const [widgets, setWidgets] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
+
+  const fetchWidgets = async () => {
+    const res = await fetch('/api/widgets');
+    const data = await res.json();
+    setWidgets(data);
+  };
+
+  const createWidget = async (widget: { type: string; content: string }) => {
+    await fetch('/api/widgets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(widget),
+    });
+    fetchWidgets();
+  };
 
   useEffect(() => {
-    fetch('/api/widgets')
-      .then(res => res.json())
-      .then(setWidgets);
+    fetchWidgets();
   }, []);
-  const createWidget = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('/api/widgets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'TEXT',
-          content: 'This is a new widget'
-        }),
-      });
+  return <WidgetManager widgets={widgets} createWidget={createWidget} />;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create widget');
-      }
-
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
-  return (
-    <div>
-      <button onClick={createWidget} disabled={loading}>
-        {loading ? 'Creating...' : 'Create Widget'}
-      </button>
-      <h1>Widgets</h1>
-      {widgets.map((widget: any) => (
-        <div key={widget.id}>{widget.content}</div>
-      ))}
-    </div>
-  );
 }
 
 export default App;
+
